@@ -1,0 +1,82 @@
+---
+title: "*Phytophthora* hosts in UK forests and commercial forestry"
+author: ""
+date: ""
+output: html_document
+
+---
+
+A searchable database of known Phytophthora pathogens of for tree species used in UK forests and forestry. You can search by host or by pathogen. For some species we have produced suitability maps for the UK. You can view these by clicking on the species.   
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_knit$set(root.dir = getwd())
+library(DT)
+library(raster)
+library(knitr)
+```
+```{r host_data}
+
+
+# which species have niche maps?
+nichemap_spp <- c("Phytophthora cactorum",
+            "Phytophthora cambivora",
+            "Phytophthora cinnamomi",
+            "Phytophthora cryptogea",
+            "Phytophthora gonapodyides",
+            "Phytophthora lacustris",
+            "Phytophthora plurivora",
+            "Phytophthora ramorum",
+            "Phytophthora x alni")
+
+UK_forest <- read.csv("Phytophthora_UK_forestry_spp.csv", stringsAsFactors = FALSE)
+
+hosts_Scott <- read.csv("Scott_Phytophthora_database.csv", stringsAsFactors = FALSE)
+
+inUK <- read.csv("UK_first_records.csv", stringsAsFactors = FALSE)
+
+hosts <- hosts_Scott[hosts_Scott$host.species %in% intersect(hosts_Scott$host.species, UK_forest$UK_forestry_species),]
+
+hosts$`present in UK` <- ifelse(hosts$phyto %in% inUK$species,
+                                yes = "yes",
+                                no = "no")
+
+hosts <- hosts[,c("host.species", "phyto", "present in UK", "host.family", "host.genus", "country", "year", "dataset")]
+hosts$phyto <- ifelse(hosts$phyto %in% nichemap_spp, yes = paste0("<a href='", getwd(), "/", gsub("Phytophthora |Phytophthora x ", "", hosts$phyto), "_niche.html","' target='_parent'>", hosts$phyto,  "</a>"), no = hosts$phyto)
+
+names(hosts) <- c("UK host species", "Phytophthora species", "Phytophthora present in UK", "host family", "host.genus", "country", "year", "reference")
+
+
+hosts <- hosts[,c("UK host species", "host family", "Phytophthora species", "Phytophthora present in UK", "country", "year", "reference" )]
+
+
+
+```
+
+**Search for a UK host tree species to find associated *Phytophthora* pathogens**  
+  
+  
+```{r host1, echo=FALSE, out.width = '50%'}
+
+hosts <- hosts[,c("UK host species", "host family", "Phytophthora species", "Phytophthora present in UK", "country", "year", "reference" )]
+datatable(hosts,
+          rownames = FALSE, 
+          escape = FALSE)
+
+
+
+
+```
+
+**Search for a *Phytophthora* species to find susceptible hosts in UK forests and forestry**  
+  
+  
+
+```{r host2, echo=FALSE, out.width = '50%'}
+#knitr::include_graphics("Abies amabilis.jpg")
+
+hosts <- hosts[,c("Phytophthora species", "UK host species", "host family", "country", "year", "reference" )]
+datatable(hosts,
+          rownames = FALSE, 
+          escape = FALSE)
+```

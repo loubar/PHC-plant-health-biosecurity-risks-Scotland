@@ -1,0 +1,13 @@
+"","Method","predAll"
+"1","Default",0.5
+"2","Sens=Spec",0.54
+"3","MaxSens+Spec",0.42
+"4","MaxKappa",0.82
+"5","MaxPCC",0.95
+"6","PredPrev=Obs",0.86
+"7","ObsPrev",0.00729637166823845
+"8","MeanProb",0.290977465785863
+"9","MinROCdist",0.45
+"10","ReqSens",0.44
+"11","ReqSpec",0.69
+"12","Cost",0.95
