@@ -1,0 +1,16 @@
+base
+leaflet
+RColorBrewer
+readr
+readxl
+countrycode
+dplyr
+geosphere
+sp
+rgeos
+reshape2
+htmlTable
+rgdal
+htmlwidgets
+data.table
+webshot

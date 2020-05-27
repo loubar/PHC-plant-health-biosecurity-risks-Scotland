@@ -1,0 +1,18 @@
+---
+title: "Developing tools to support plant health biosecurity in Scotland"
+author: ""
+date: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, root.dir = getwd())
+knitr::opts_knit$set(root.dir = getwd())
+```
+
+## [Where are new *Phytophthora* coming from? Biosecurity risks from imported plants.](<trade_flows.html>)
+
+## [Which *Phytophthora* are associated with hosts in UK forest and forestry? Selecting resilient hosts.](<Phytophthora_hosts.html>) 
+
+## [UK suitability for *Phytophthora* species and known distributions.](<alni_niche.html>)  
+

@@ -1,0 +1,263 @@
+---
+title: Pathways for global movement of *Phytophthora* species
+author: ""
+date: ""
+output: html_document
+---
+
+###International trade
+
+Trade in live plants is considered the main pathway for the introduction of *Phytophthora* species to new geographic regions. By selecting a country from the menu on the right of the map you can view that country's import volumes of live plants from different source countries. The *Phytophthora* species present in each country can be viewed by clicking on the country. For recently discovered  *Phytophthora* species (described after 2014), you can link to trait-based predictions for future global spread from the pop-up species lists for each country. We are currently modelling the risk that a new *Phytophthora* species is detected in a country based on the volume of live plant imports and how the biological traits of the species mediate their ability to exploit these transport pathways.     
+
+
+```{r setup, echo = FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_knit$set(root.dir = getwd())
+
+
+```
+
+```{r include=FALSE}
+library(leaflet)
+library(RColorBrewer)
+library(readr)
+library(readxl)
+library(countrycode)
+library(dplyr)
+library(geosphere)
+library(rgeos)
+library(reshape2)
+library(htmlTable)
+library(rgdal)
+library(sp)
+library(htmlwidgets)
+library(data.table)
+library(webshot)
+
+UK_species <- read.csv("data/UK_first_records.csv", stringsAsFactors = FALSE)
+
+X = fread("data/2019-08-06_country_level_occurrence_database.csv", data.table=FALSE)
+dim(X)
+dim(X <- X[!is.na(X$year),])
+X$year[nchar(X$year)>4] <- trimws(gsub("[[:alpha:]]", "", X$year[nchar(X$year)>4]))
+X <- X[grep("^13", X$year, invert = TRUE),]
+X$year[nchar(X$year)>4] <- year(as.Date(X$year[nchar(X$year)>4]))
+X <- X[grep("^$|^0$", X$year, invert = TRUE),] # get rid of records with missing year
+# the genus was only described in 1876 (http://www.indexfungorum.org/names/NamesRecord.asp?RecordID=20418),
+# so discard any records prior to this date
+X <- X[!X$year < 1876,]
+
+
+
+# get earliest record in each country
+
+X <- aggregate(year ~ iso3 + spname, data = X, FUN = min, na.rm = TRUE)
+
+live_plants <-
+  read_rds("data/live_tradeMatrix.rds")
+
+climate_dist <- 
+  read_rds("data/MD_mean.rds")
+
+
+
+diag(live_plants) <- NA
+live_plants[live_plants < 0.5] <- NA # ignore trade less than 0.5 tons to simplify the map
+connectivity_by_country <- melt(live_plants, 
+                                varnames = c("exporter_iso3", "importer_iso3"),
+                                as.is = TRUE)
+connectivity_by_country <- connectivity_by_country[complete.cases(connectivity_by_country),]
+
+
+
+
+
+source <- read_rds("data/phytophthora_source_matrix.rds")
+arrival <- read_rds("data/phytophthora_arrival_matrix.rds") # new detections since 2005
+all_reports <- source+arrival
+arrivals_by_country <- data.frame(importer_iso3 = names(rowSums(arrival, na.rm = TRUE)), 
+                                  reports = as.integer(rowSums(arrival, na.rm = TRUE)),
+                                  stringsAsFactors = FALSE)
+sources_by_country <- data.frame(importer_iso3 = names(rowSums(source, na.rm = TRUE)), 
+                                 reports = as.integer(rowSums(source, na.rm = TRUE)),
+                                 stringsAsFactors = FALSE)
+species_list_by_country <- data.frame(importer_iso3 = names(rowSums(all_reports, na.rm = TRUE)), 
+                                      reports = as.integer(rowSums(all_reports, na.rm = TRUE)),
+                                      stringsAsFactors = FALSE)
+
+# how similar is climate to UK by country
+climate_match_by_country <- data.frame(importer_iso3 = names(climate_dist[,"GBR"]),
+                                       climate_distance = climate_dist[,"GBR"],
+                                       stringsAsFactors = FALSE)
+
+
+
+
+
+# UK_imports_by_country <- data.frame(id = names(live_plants[,"GBR"]), 
+#                                     live_plants = live_plants[,"GBR"])
+# # exclude the data with less than half a tonne annually
+# UK_imports_by_country <- UK_imports_by_country[UK_imports_by_country$live_plants >= 0.5,]
+# UK_imports_by_country$country_name <- countrycode(sourcevar = UK_imports_by_country$id, origin = "iso3c", destination = "country.name")
+
+
+#y <- full_join(connectivity_by_country, arrivals_by_country)
+#y <- full_join(x , sources_by_country)
+
+
+UK_risk_register <- 
+  c("Phytophthora acerina",
+    "Phytophthora alni",
+    "Phytophthora austrocedri",
+    "Phytophthora bishii",
+    "Phytophthora chrysanthemi",
+    "Phytophthora foliorum",
+    "Phytophthora fragariae",
+    "Phytophthora fragariaefolia",
+    "Phytophthora infestans",
+    "Phytophthora kernoviae",
+    "Phytophthora lateralis",
+    "Phytophthora pinifolia",
+    "Phytophthora pluvialis",
+    "Phytophthora polonica",
+    "Phytophthora pseudosyringae",
+    "Phytophthora ramorum",
+    "Phytophthora rubi",
+    "Phytophthora siskiyouensis")
+
+# create a pop up html table of species reports in each country
+country_data <- left_join(species_list_by_country, climate_match_by_country)
+species_reports <- all_reports
+
+country_data$country <- countrycode(sourcevar = country_data$importer_iso3,
+                                    origin = "iso3c",
+                                    destination = "country.name")
+for (i in country_data$importer_iso3){
+  first_reports <- X[X$iso3 == i,]
+  rownames(first_reports) <- first_reports$spname
+  species_list <- names(which(species_reports[i,] > 0))
+  species_as_hyperlink <- species_list
+  # ifelse(species_list %in% species_to_predict, 
+  #                                yes = paste0("<a href='", getwd(),"/", 
+  #                                             gsub("Phytophthora |Phytophthora x ", "", species_list),
+  #                                             "_predict100.html","' 
+  #                                             target='_parent'>", 
+  #                                             species_list,  
+  #                                             "</a>"),
+  #                                no = species_list)
+  country_data$species_table[country_data$importer_iso3 == i] <- htmlTable(data.frame(species = species_as_hyperlink,
+                                                                                      first_report = first_reports[species_list, "year"],
+                                UK_risk_register = ifelse(names(which(species_reports[i,] > 0)) %in% UK_risk_register,
+                                                          yes = "yes", no = "no")),
+                                caption = paste0(countrycode(sourcevar = i,
+                                                             origin = "iso3c",
+                                                             destination = "country.name"), " - species reported"),
+                                rnames = FALSE)
+}
+
+
+# get a nice world map - someone recommeded this one:
+download.file(file.path('http://www.naturalearthdata.com/http/',
+                        'www.naturalearthdata.com/download/50m/cultural',
+                        'ne_50m_admin_0_countries.zip'), 
+              f <- tempfile())
+unzip(f, exdir=tempdir())
+world <- readOGR(tempdir(), 'ne_50m_admin_0_countries', encoding='UTF-8')
+country_data$GU_A3 <- country_data$importer_iso3
+country_data <- country_data[country_data$importer_iso3 %in% world$GU_A3,]
+connectivity_by_country <- connectivity_by_country[connectivity_by_country$exporter_iso3 %in% world$GU_A3 & connectivity_by_country$importer_iso3 %in% world$GU_A3,]
+world <- merge(world, country_data, all.x= TRUE) # 
+
+
+
+
+
+rownames(connectivity_by_country) <- 1:nrow(connectivity_by_country)
+flows <- list()
+for(i in 1:nrow(connectivity_by_country)){
+  #print(i)
+  
+  flows[[i]] <- gcIntermediate(gCentroid(world[world$GU_A3 == connectivity_by_country[i,"exporter_iso3"],], 
+                                    byid = TRUE), 
+                          gCentroid(world[world$GU_A3 == connectivity_by_country[i,"importer_iso3"],], 
+                                    byid = TRUE), 
+                          sp = TRUE, 
+                          addStartEnd = TRUE,
+                          breakAtDateLine = TRUE)
+  row.names(flows[[i]]) <- as.character(i) # assign unique id names to each spatial lines feature, matching row names of connectivity 
+  flows[[i]] <- SpatialLinesDataFrame(flows[[i]], data = connectivity_by_country[i,], match.ID = TRUE)
+  
+}
+flows <- do.call(rbind, flows)
+flows$rank <- order(flows$value, decreasing = TRUE)
+flows$importer_name <- countrycode(sourcevar = flows$importer_iso3, origin = "iso3c", destination = "country.name")
+flows$exporter_name <- countrycode(sourcevar = flows$exporter_iso3, origin = "iso3c", destination = "country.name")
+flows <- spTransform(flows, world@proj4string)
+#nrow(flows <- flows[flows$exporter_iso3 %in% arrivals_by_country$importer_iso3 & flows$importer_iso3 %in% arrivals_by_country$importer_iso3,])
+#nrow(flows <- flows[flows$value > 50,])
+#flows$log_trade <- log(flows$value)
+#pal_flows <- colorNumeric("Reds", domain = log(flows@data$value))
+pal <- colorNumeric("Greens", domain = log(world@data$climate_distance))
+pal_trade <- colorNumeric("YlOrRd", domain = log(flows$value))
+```
+
+```{r map_flows}
+# make the interactive map
+
+# a pop up text box about traits
+content <- paste(sep = "<br/>",
+  "<b>>Which *Phytophthora* species are more likely to arrive via trade in live plants?</a></b>",
+  "Our analyses suggest *Phytophthora* species traits can mediate how well different species can exploit these transport pathways. Cold-tolernace (minimum temperature for growth) and thicker-walled resting structures (oospores) could be of value for predicting which species are more likely to be moved with live plants.",
+  "Seattle, WA 98138"
+)
+
+Phytophthora_source_map <- 
+  leaflet(data = world, width = "100%") %>% addTiles(options = providerTileOptions(minZoom=1, maxZoom=10)) %>% 
+  addMapPane("polygons", zIndex = 410) %>%
+  addMapPane("lines", zIndex = 480) %>%
+  clearBounds() %>%
+  addPolygons(
+    fillColor = ~pal(log(world@data$climate_distance)),
+    weight = 1,
+    opacity = 1,
+    color = "grey",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    popup = ~species_table,
+    highlight = highlightOptions(
+      weight = 1.5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE)
+  ) %>% 
+  addLegend(pal = pal, 
+            values = ~log(climate_distance), 
+            opacity = 0.7, 
+            title = "climate distance",
+            position = "bottomleft")  %>%
+  addPolylines(data = flows,
+               group = ~importer_name,
+               weight = ~log(value),
+               color = ~pal_trade(log(value)),
+               label = paste0(flows$exporter_name, ": ", sprintf("%.2f", flows$value), " tons")
+               )  %>%
+  addLayersControl(data = flows,
+                   baseGroups = c("United Kingdom", sort(unique(grep("United Kingdom", flows$importer_name, invert = TRUE, value = TRUE)))),
+                 options = layersControlOptions(collapsed = TRUE))
+  
+   
+Phytophthora_source_map
+
+# save as static map for presentations
+
+# save as html
+ # saveWidget(Phytophthora_source_map,
+ #             file = "C:/Users/loubar/Google Drive/Phytophthora_hosts/Phytophthora_source_map.html",
+ #             title = "Phytophthora source map: annual imports of live plants")
+ # 
+ # 
+ # webshot("Phytophthora_source_map.html", file = "flow_map_static.png",
+ #         cliprect = "viewport")
+```

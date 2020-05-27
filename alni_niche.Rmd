@@ -1,0 +1,83 @@
+---
+title: "Climate and landuse suitability"
+author: ""
+date: ""
+output: html_document
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+```
+
+
+
+```{r niche_map, include=FALSE}
+library(biomod2)
+library(mapview)
+library(raster)
+library(leaflet)
+library(dplyr)
+library(rgdal)
+
+# all_spp <- c("cactorum",
+#             "cambivora",
+#             "cinnamomi",
+#             "cryptogea",
+#             "gonapodyides",
+#             "lacustris",
+#             "plurivora",
+#             "ramorum",
+#             "alni")
+species <- "alni"
+
+
+  UK_validation <- readOGR("data", layer="UK_validation")
+  UK_validation <- UK_validation[grep(species, UK_validation$species),]
+  
+  r <- raster(grep("current\\.tif", list.files(pattern = species, recursive = TRUE), value = TRUE)[1])
+
+  extUK <- c(-495000, 130000, 5800000, 6900000)
+  r <- crop(r, extUK)
+  UK_validation <- crop(UK_validation, extUK)
+  UK_validation <- spTransform(UK_validation, crs("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"))
+  
+  m <- mapview(r, layer.name = c(paste0("P. ", species, " suitability"))) 
+  #+ mapview(UK_validation, layer.name = paste0("P. ", species, " records")) + leafpop::popupTable(x = UK_validation, zcol = "host", row.numbers = FALSE)
+  #layer.name = c(paste0("P. ", species, " suitability"), paste0("P. ", species, " records"))
+  #m
+  #+ mapview(validation, layer.name = "UK validation data")
+  
+  #cntr_crds <- c(mean(coordinates(r_crop)[, 1]),
+  #               mean(coordinates(r_crop)[, 2]))
+  #m@map %>% setView(cntr_crds[1], cntr_crds[2], zoom = 2)
+  #mapshot(m, url = paste0("_site/", all_spp[i], ".html"))
+
+```
+
+###*Phytophthora alni*
+```{r fig.width = 10}
+#pal <- colorFactor(c("white", "black"), domain = c("nursery", "wider environment"))
+m@map %>% setView(zoom = 6, lng = 0, lat = 55) %>% addCircleMarkers(data = UK_validation,
+                   #group = ~species,
+                   radius = 6,
+                   stroke = FALSE, 
+                   fillOpacity = 0.9,
+                   label = ~host, 
+                   color = "white") %>%
+    addLegend(data = UK_validation,
+              colors = "white",
+              labels = paste0("P. ", species, " records"),
+              opacity = 0.9, 
+              title = "",
+              position = "bottomleft") 
+
+```

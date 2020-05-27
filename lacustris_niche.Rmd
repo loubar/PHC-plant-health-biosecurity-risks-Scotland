@@ -1,0 +1,77 @@
+---
+title: "Climate and landuse suitability"
+author: ""
+date: ""
+output: html_document
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_knit$set(root.dir = getwd())
+library(dplyr)
+```
+
+
+
+```{r niche_map, include=FALSE}
+library(biomod2)
+library(mapview)
+library(raster)
+library(leaflet)
+
+# all_spp <- c("cactorum",
+#             "cambivora",
+#             "cinnamomi",
+#             "cryptogea",
+#             "gonapodyides",
+#             "lacustris",
+#             "plurivora",
+#             "ramorum",
+#             "alni")
+species <- "lacustris"
+
+
+  load("UK_validation.rData")
+  validation <- UK_points[grep(species, UK_points$species),]
+  r <- raster(grep("current\\.tif", list.files(pattern = species, recursive = TRUE), value = TRUE)[1])
+
+  #extEU = c(-1635172, 3435823, 4064677, 8146210)
+  #r <- crop(r, extEU)
+
+  m <- mapview(r, maxpixels = 2000000, layer.name = paste0("P. ", species, " suitability")) 
+  
+  #+ mapview(validation, layer.name = "UK validation data")
+  
+  #cntr_crds <- c(mean(coordinates(r_crop)[, 1]),
+  #               mean(coordinates(r_crop)[, 2]))
+  #m@map %>% setView(cntr_crds[1], cntr_crds[2], zoom = 2)
+  #mapshot(m, url = paste0("_site/", all_spp[i], ".html"))
+
+```
+
+###*Phytophthora lacustris*
+```{r fig.width = 10}
+pal <- colorFactor(c("white", "black"), domain = c("nursery", "wider environment"))
+m@map %>% setView(zoom = 2, lng = 0, lat = 0, options = list(minZoom=2, maxZoom=7)) %>% addCircleMarkers(data = validation,
+                                                                                                               color = ~pal(nursery_widerEnvironment),
+                   group = ~species,
+                   radius = 6,
+                   stroke = FALSE, 
+                   fillOpacity = 0.5,
+                   label = ~host) %>%
+  addLegend(data = validation,
+            pal = pal, 
+            values = ~nursery_widerEnvironment, 
+            opacity = 0.7, 
+            title = "",
+            position = "bottomleft") 
+
+```

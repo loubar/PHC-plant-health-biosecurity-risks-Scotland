@@ -1,0 +1,31 @@
+name: "my-website"
+output_dir: "."
+navbar:
+  title: "Developing tools to support plant health biosecurity in Scotland"
+  type: inverse
+left:
+  - text: "Home"
+    href: index.html
+  - text: "UK forest and forestry hosts"
+    href: Phytophthora_hosts.html
+  - text: "Predicting *Phytophthora* movement in live plant trade"
+    href: trade_flows.html
+  - text: "Prevalence of *Phytophthora* species in nurseries and the wider environment"
+    href: UK_nursery_wider_env.html
+  - text: "Phytophthora cactorum global suitability"
+    href: cactorum_niche.html
+  - text: "Phytophthora cinnamomi global suitability"
+    href: cinnamomi_niche.html
+  - text: "Phytophthora cryptogea global suitability"
+    href: cryptogea_niche.html
+  - text: "Phytophthora gonapodyides global suitability"
+    href: gonapodyides_niche.html
+  - text: "Phytophthora lacustris global suitability"
+    href: lacustris_niche.html
+  - text: "Phytophthora plurivora global suitability"
+    href: plurivora_niche.html
+  - text: "Phytophthora ramorum global suitability"
+    href: ramorum_niche.html
+  - text: "Phytophthora alni global suitability"
+    href: alni_niche.html
+    
