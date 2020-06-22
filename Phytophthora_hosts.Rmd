@@ -6,7 +6,9 @@ output: html_document
 
 ---
 
-A searchable database of known Phytophthora pathogens of for tree species used in UK forests and forestry. You can search by host or by pathogen. For some species we have produced suitability maps for the UK. You can view these by clicking on the species.   
+###Selecting resilient hosts
+
+This tool is a searchable database of known *Phytophthora* pathogens of tree species used in UK forests and forestry. You can search by tree host, by pathogen, or by country.   
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -17,37 +19,7 @@ library(knitr)
 ```
 ```{r host_data}
 
-
-# which species have niche maps?
-nichemap_spp <- c("Phytophthora cactorum",
-            "Phytophthora cambivora",
-            "Phytophthora cinnamomi",
-            "Phytophthora cryptogea",
-            "Phytophthora gonapodyides",
-            "Phytophthora lacustris",
-            "Phytophthora plurivora",
-            "Phytophthora ramorum",
-            "Phytophthora x alni")
-
-UK_forest <- read.csv("Phytophthora_UK_forestry_spp.csv", stringsAsFactors = FALSE)
-
-hosts_Scott <- read.csv("Scott_Phytophthora_database.csv", stringsAsFactors = FALSE)
-
-inUK <- read.csv("UK_first_records.csv", stringsAsFactors = FALSE)
-
-hosts <- hosts_Scott[hosts_Scott$host.species %in% intersect(hosts_Scott$host.species, UK_forest$UK_forestry_species),]
-
-hosts$`present in UK` <- ifelse(hosts$phyto %in% inUK$species,
-                                yes = "yes",
-                                no = "no")
-
-hosts <- hosts[,c("host.species", "phyto", "present in UK", "host.family", "host.genus", "country", "year", "dataset")]
-hosts$phyto <- ifelse(hosts$phyto %in% nichemap_spp, yes = paste0("<a href='", getwd(), "/", gsub("Phytophthora |Phytophthora x ", "", hosts$phyto), "_niche.html","' target='_parent'>", hosts$phyto,  "</a>"), no = hosts$phyto)
-
-names(hosts) <- c("UK host species", "Phytophthora species", "Phytophthora present in UK", "host family", "host.genus", "country", "year", "reference")
-
-
-hosts <- hosts[,c("UK host species", "host family", "Phytophthora species", "Phytophthora present in UK", "country", "year", "reference" )]
+load("data/hosts.rData")
 
 
 
@@ -67,16 +39,10 @@ datatable(hosts,
 
 
 ```
+###Feedback
 
-**Search for a *Phytophthora* species to find susceptible hosts in UK forests and forestry**  
-  
-  
+Thank you for taking the time to explore this data. Please follow the link below to complete your feedback. Your responses will be used to understand the value of information about which hosts are known to be susceptible to *Phytophthora* species in supporting plant health awareness in planting and procurement decisions for environmental and landscaping purposes.
 
-```{r host2, echo=FALSE, out.width = '50%'}
-#knitr::include_graphics("Abies amabilis.jpg")
+*LB: It may be possible for us to embed a Google Forms item within the page (see https://github.com/ramnathv/RGoogleForms). However, we may need something more flexible for our questionnaire, in which case a link openeing in a new tab might work better. This is just a mock-up questionnaire...*
 
-hosts <- hosts[,c("Phytophthora species", "UK host species", "host family", "country", "year", "reference" )]
-datatable(hosts,
-          rownames = FALSE, 
-          escape = FALSE)
-```
+## [Enter my feedback - *Phytophthora* associated with hosts in UK forest and forestry?](<https://docs.google.com/forms/d/182WIK4SZFv0hQu9YyJ0FOddkD0I5w-HYJWm50hRDcyU/edit?usp=sharing>)

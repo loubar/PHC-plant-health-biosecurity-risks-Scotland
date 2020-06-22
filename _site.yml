@@ -6,26 +6,12 @@ navbar:
 left:
   - text: "Home"
     href: index.html
-  - text: "UK forest and forestry hosts"
+  - text: "Which *Phytophthora* are associated with hosts in UK forest and forestry? Selecting resilient hosts."
     href: Phytophthora_hosts.html
-  - text: "Predicting *Phytophthora* movement in live plant trade"
+  - text: "Where are new *Phytophthora* coming from? Plant Health Biosecurity risks from imported plants."
     href: trade_flows.html
-  - text: "Prevalence of *Phytophthora* species in nurseries and the wider environment"
-    href: UK_nursery_wider_env.html
-  - text: "Phytophthora cactorum global suitability"
-    href: cactorum_niche.html
-  - text: "Phytophthora cinnamomi global suitability"
-    href: cinnamomi_niche.html
-  - text: "Phytophthora cryptogea global suitability"
-    href: cryptogea_niche.html
-  - text: "Phytophthora gonapodyides global suitability"
-    href: gonapodyides_niche.html
-  - text: "Phytophthora lacustris global suitability"
-    href: lacustris_niche.html
-  - text: "Phytophthora plurivora global suitability"
-    href: plurivora_niche.html
-  - text: "Phytophthora ramorum global suitability"
+  - text: "UK suitability for *Phytophthora ramorum* and known distribution."
     href: ramorum_niche.html
-  - text: "Phytophthora alni global suitability"
-    href: alni_niche.html
+  - text: "Supplementary juniper planting and *Phytophthora austrocedri* outbreaks."
+    href: ramorum_niche.html
     

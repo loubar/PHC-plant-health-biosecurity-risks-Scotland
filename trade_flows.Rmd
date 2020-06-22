@@ -1,20 +1,28 @@
 ---
-title: Pathways for global movement of *Phytophthora* species
+title: Global movement of *Phytophthora* species through the plant trade
 author: ""
 date: ""
 output: html_document
 ---
 
-###International trade
+###Import risk factors
 
-Trade in live plants is considered the main pathway for the introduction of *Phytophthora* species to new geographic regions. By selecting a country from the menu on the right of the map you can view that country's import volumes of live plants from different source countries. The *Phytophthora* species present in each country can be viewed by clicking on the country. For recently discovered  *Phytophthora* species (described after 2014), you can link to trait-based predictions for future global spread from the pop-up species lists for each country. We are currently modelling the risk that a new *Phytophthora* species is detected in a country based on the volume of live plant imports and how the biological traits of the species mediate their ability to exploit these transport pathways.     
+International trade in live plants is considered the main pathway for the introduction of plant pests and pathogens species to new geographic regions, but climate matching, biosecurity and pest reporting will also influence how pests and pathogens spread globally. By selecting import risk factors from the menu you can view global data on these different drivers of new arrivals of plant pests and pathogens. We have used these risk factors to build a model of *Phytophthora* import risk to the UK from exporting countries. By clicking on each country, you can view a list of the *Phytophthora* species that have been reported there and the relative risk of these species arriving in the UK, if not already present. We have also used biological characteristics or traits of these *Phytophthora* species to help predict which species may be more likely to be transported to and establish in new regions. These traits include thermal tolerance range and the presence and morphology of survival structures allowing them to persist in soil and asymptomatic hosts. 
 
-
+The video below demonstrates the ways you can interact with the data and maps.  
+  
+*LB: I haven't made this material yet. This is a random YouTube tutorial about RMarkdown so I could test if we could embed a video within the webpage. I think we should wait for the project meeting to see what Mike and Mariella think would be the best way to communicate the tools to stakeholders and how to best fit in with the stakeholder activities they have planned*     
+   
+     
+<iframe width="560" height="315" src="https://www.youtube.com/embed/6A5EpqqDOdk" frameborder="0" allowfullscreen></iframe>    
+   
+   
+  
+  
+  
 ```{r setup, echo = FALSE}
 
 knitr::opts_chunk$set(echo = FALSE)
-knitr::opts_knit$set(root.dir = getwd())
-
 
 ```
 
@@ -22,7 +30,6 @@ knitr::opts_knit$set(root.dir = getwd())
 library(leaflet)
 library(RColorBrewer)
 library(readr)
-library(readxl)
 library(countrycode)
 library(dplyr)
 library(geosphere)
@@ -31,200 +38,89 @@ library(reshape2)
 library(htmlTable)
 library(rgdal)
 library(sp)
+library(leafem)
+library(raster)
 library(htmlwidgets)
-library(data.table)
-library(webshot)
-
-UK_species <- read.csv("data/UK_first_records.csv", stringsAsFactors = FALSE)
-
-X = fread("data/2019-08-06_country_level_occurrence_database.csv", data.table=FALSE)
-dim(X)
-dim(X <- X[!is.na(X$year),])
-X$year[nchar(X$year)>4] <- trimws(gsub("[[:alpha:]]", "", X$year[nchar(X$year)>4]))
-X <- X[grep("^13", X$year, invert = TRUE),]
-X$year[nchar(X$year)>4] <- year(as.Date(X$year[nchar(X$year)>4]))
-X <- X[grep("^$|^0$", X$year, invert = TRUE),] # get rid of records with missing year
-# the genus was only described in 1876 (http://www.indexfungorum.org/names/NamesRecord.asp?RecordID=20418),
-# so discard any records prior to this date
-X <- X[!X$year < 1876,]
 
 
 
-# get earliest record in each country
+load("data/export_risk_composite.rData")
 
-X <- aggregate(year ~ iso3 + spname, data = X, FUN = min, na.rm = TRUE)
-
-live_plants <-
-  read_rds("data/live_tradeMatrix.rds")
-
-climate_dist <- 
-  read_rds("data/MD_mean.rds")
-
-
-
-diag(live_plants) <- NA
-live_plants[live_plants < 0.5] <- NA # ignore trade less than 0.5 tons to simplify the map
-connectivity_by_country <- melt(live_plants, 
-                                varnames = c("exporter_iso3", "importer_iso3"),
-                                as.is = TRUE)
-connectivity_by_country <- connectivity_by_country[complete.cases(connectivity_by_country),]
-
-
-
-
-
-source <- read_rds("data/phytophthora_source_matrix.rds")
-arrival <- read_rds("data/phytophthora_arrival_matrix.rds") # new detections since 2005
-all_reports <- source+arrival
-arrivals_by_country <- data.frame(importer_iso3 = names(rowSums(arrival, na.rm = TRUE)), 
-                                  reports = as.integer(rowSums(arrival, na.rm = TRUE)),
-                                  stringsAsFactors = FALSE)
-sources_by_country <- data.frame(importer_iso3 = names(rowSums(source, na.rm = TRUE)), 
-                                 reports = as.integer(rowSums(source, na.rm = TRUE)),
-                                 stringsAsFactors = FALSE)
-species_list_by_country <- data.frame(importer_iso3 = names(rowSums(all_reports, na.rm = TRUE)), 
-                                      reports = as.integer(rowSums(all_reports, na.rm = TRUE)),
-                                      stringsAsFactors = FALSE)
-
-# how similar is climate to UK by country
-climate_match_by_country <- data.frame(importer_iso3 = names(climate_dist[,"GBR"]),
-                                       climate_distance = climate_dist[,"GBR"],
-                                       stringsAsFactors = FALSE)
-
-
-
-
-
-# UK_imports_by_country <- data.frame(id = names(live_plants[,"GBR"]), 
-#                                     live_plants = live_plants[,"GBR"])
-# # exclude the data with less than half a tonne annually
-# UK_imports_by_country <- UK_imports_by_country[UK_imports_by_country$live_plants >= 0.5,]
-# UK_imports_by_country$country_name <- countrycode(sourcevar = UK_imports_by_country$id, origin = "iso3c", destination = "country.name")
-
-
-#y <- full_join(connectivity_by_country, arrivals_by_country)
-#y <- full_join(x , sources_by_country)
-
-
-UK_risk_register <- 
-  c("Phytophthora acerina",
-    "Phytophthora alni",
-    "Phytophthora austrocedri",
-    "Phytophthora bishii",
-    "Phytophthora chrysanthemi",
-    "Phytophthora foliorum",
-    "Phytophthora fragariae",
-    "Phytophthora fragariaefolia",
-    "Phytophthora infestans",
-    "Phytophthora kernoviae",
-    "Phytophthora lateralis",
-    "Phytophthora pinifolia",
-    "Phytophthora pluvialis",
-    "Phytophthora polonica",
-    "Phytophthora pseudosyringae",
-    "Phytophthora ramorum",
-    "Phytophthora rubi",
-    "Phytophthora siskiyouensis")
-
-# create a pop up html table of species reports in each country
-country_data <- left_join(species_list_by_country, climate_match_by_country)
-species_reports <- all_reports
-
-country_data$country <- countrycode(sourcevar = country_data$importer_iso3,
-                                    origin = "iso3c",
-                                    destination = "country.name")
-for (i in country_data$importer_iso3){
-  first_reports <- X[X$iso3 == i,]
-  rownames(first_reports) <- first_reports$spname
-  species_list <- names(which(species_reports[i,] > 0))
-  species_as_hyperlink <- species_list
-  # ifelse(species_list %in% species_to_predict, 
-  #                                yes = paste0("<a href='", getwd(),"/", 
-  #                                             gsub("Phytophthora |Phytophthora x ", "", species_list),
-  #                                             "_predict100.html","' 
-  #                                             target='_parent'>", 
-  #                                             species_list,  
-  #                                             "</a>"),
-  #                                no = species_list)
-  country_data$species_table[country_data$importer_iso3 == i] <- htmlTable(data.frame(species = species_as_hyperlink,
-                                                                                      first_report = first_reports[species_list, "year"],
-                                UK_risk_register = ifelse(names(which(species_reports[i,] > 0)) %in% UK_risk_register,
-                                                          yes = "yes", no = "no")),
-                                caption = paste0(countrycode(sourcevar = i,
-                                                             origin = "iso3c",
-                                                             destination = "country.name"), " - species reported"),
-                                rnames = FALSE)
-}
 
 
 # get a nice world map - someone recommeded this one:
-download.file(file.path('http://www.naturalearthdata.com/http/',
-                        'www.naturalearthdata.com/download/50m/cultural',
-                        'ne_50m_admin_0_countries.zip'), 
-              f <- tempfile())
-unzip(f, exdir=tempdir())
-world <- readOGR(tempdir(), 'ne_50m_admin_0_countries', encoding='UTF-8')
-country_data$GU_A3 <- country_data$importer_iso3
-country_data <- country_data[country_data$importer_iso3 %in% world$GU_A3,]
-connectivity_by_country <- connectivity_by_country[connectivity_by_country$exporter_iso3 %in% world$GU_A3 & connectivity_by_country$importer_iso3 %in% world$GU_A3,]
-world <- merge(world, country_data, all.x= TRUE) # 
+# download.file(file.path('http://www.naturalearthdata.com/http/',
+#                         'www.naturalearthdata.com/download/50m/cultural',
+#                         'ne_50m_admin_0_countries.zip'), 
+#               f <- tempfile())
 
+#unzip(f, exdir=tempdir())
 
+world <- readOGR(dsn = 'data', layer = 'ne_50m_admin_0_countries', encoding='UTF-8')
+export_risk_composite$GU_A3 <- export_risk_composite$exporter_iso3
+export_risk_composite <- export_risk_composite[export_risk_composite$importer_iso3 %in% world$GU_A3,]
+world <- merge(world, export_risk_composite, all.x= TRUE) # 
 
+# where no Phytophthora are reported (0) convert richness to NA 
+world@data$Phytophthora_richness[world@data$Phytophthora_richness == 0] <- NA
 
-
-rownames(connectivity_by_country) <- 1:nrow(connectivity_by_country)
-flows <- list()
-for(i in 1:nrow(connectivity_by_country)){
-  #print(i)
-  
-  flows[[i]] <- gcIntermediate(gCentroid(world[world$GU_A3 == connectivity_by_country[i,"exporter_iso3"],], 
-                                    byid = TRUE), 
-                          gCentroid(world[world$GU_A3 == connectivity_by_country[i,"importer_iso3"],], 
-                                    byid = TRUE), 
-                          sp = TRUE, 
-                          addStartEnd = TRUE,
-                          breakAtDateLine = TRUE)
-  row.names(flows[[i]]) <- as.character(i) # assign unique id names to each spatial lines feature, matching row names of connectivity 
-  flows[[i]] <- SpatialLinesDataFrame(flows[[i]], data = connectivity_by_country[i,], match.ID = TRUE)
-  
-}
-flows <- do.call(rbind, flows)
-flows$rank <- order(flows$value, decreasing = TRUE)
-flows$importer_name <- countrycode(sourcevar = flows$importer_iso3, origin = "iso3c", destination = "country.name")
-flows$exporter_name <- countrycode(sourcevar = flows$exporter_iso3, origin = "iso3c", destination = "country.name")
-flows <- spTransform(flows, world@proj4string)
-#nrow(flows <- flows[flows$exporter_iso3 %in% arrivals_by_country$importer_iso3 & flows$importer_iso3 %in% arrivals_by_country$importer_iso3,])
-#nrow(flows <- flows[flows$value > 50,])
-#flows$log_trade <- log(flows$value)
-#pal_flows <- colorNumeric("Reds", domain = log(flows@data$value))
-pal <- colorNumeric("Greens", domain = log(world@data$climate_distance))
-pal_trade <- colorNumeric("YlOrRd", domain = log(flows$value))
+pal_richness <- colorNumeric("YlOrRd", domain = log(world@data$Phytophthora_richness))
+pal_risk <- colorNumeric("YlOrRd", domain = world@data$composite_export_risk)
+pal_climate <- colorNumeric("YlOrRd", domain = log(1+world@data$climate_raw))
+pal_trade <- colorNumeric("YlOrRd", domain = log(1+world@data$trade_raw))
+pal_expproactive <- colorNumeric("YlOrRd", domain = world@data$expproactive_raw)
 ```
 
-```{r map_flows}
+```{r map_flows, warning=FALSE, message=FALSE}
 # make the interactive map
 
-# a pop up text box about traits
-content <- paste(sep = "<br/>",
-  "<b>>Which *Phytophthora* species are more likely to arrive via trade in live plants?</a></b>",
-  "Our analyses suggest *Phytophthora* species traits can mediate how well different species can exploit these transport pathways. Cold-tolernace (minimum temperature for growth) and thicker-walled resting structures (oospores) could be of value for predicting which species are more likely to be moved with live plants.",
-  "Seattle, WA 98138"
-)
+#"annual exports to UK (metric tons of live plants)"
 
-Phytophthora_source_map <- 
   leaflet(data = world, width = "100%") %>% addTiles(options = providerTileOptions(minZoom=1, maxZoom=10)) %>% 
-  addMapPane("polygons", zIndex = 410) %>%
-  addMapPane("lines", zIndex = 480) %>%
-  clearBounds() %>%
   addPolygons(
-    fillColor = ~pal(log(world@data$climate_distance)),
+    fillColor = ~pal_risk(world@data$composite_export_risk),
+    group = "export risk (all risk factors)",
     weight = 1,
     opacity = 1,
     color = "grey",
     dashArray = "3",
     fillOpacity = 0.7,
     popup = ~species_table,
+    popupOptions = c(maxWidth = 600),
+    highlight = highlightOptions(
+      weight = 1.5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE)
+  ) %>%
+  addPolygons(
+    fillColor = ~pal_richness(log(world@data$Phytophthora_richness)),
+    group = "Phytophthora richness",
+    weight = 1,
+    opacity = 1,
+    color = "grey",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    popup = ~species_table,
+    popupOptions = c(maxWidth = 600),
+    highlight = highlightOptions(
+      weight = 1.5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE)
+  ) %>%
+  addPolygons(
+    fillColor = ~pal_trade(log(1+world@data$trade_raw)),
+    group = "annual exports to UK (metric tons of live plants)",
+    weight = 1,
+    opacity = 1,
+    color = "grey",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    popup = ~species_table,
+    popupOptions = c(maxWidth = 600),
     highlight = highlightOptions(
       weight = 1.5,
       color = "#666",
@@ -232,32 +128,101 @@ Phytophthora_source_map <-
       fillOpacity = 0.7,
       bringToFront = TRUE)
   ) %>% 
-  addLegend(pal = pal, 
-            values = ~log(climate_distance), 
-            opacity = 0.7, 
-            title = "climate distance",
-            position = "bottomleft")  %>%
-  addPolylines(data = flows,
-               group = ~importer_name,
-               weight = ~log(value),
-               color = ~pal_trade(log(value)),
-               label = paste0(flows$exporter_name, ": ", sprintf("%.2f", flows$value), " tons")
-               )  %>%
-  addLayersControl(data = flows,
-                   baseGroups = c("United Kingdom", sort(unique(grep("United Kingdom", flows$importer_name, invert = TRUE, value = TRUE)))),
-                 options = layersControlOptions(collapsed = TRUE))
-  
-   
-Phytophthora_source_map
+  addPolygons(
+    fillColor = ~pal_climate(log(1+world@data$climate_raw)),
+    group = "climate similarity (1/Mahalanobis distance)",
+   weight = 1,
+    opacity = 1,
+    color = "grey",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    popup = ~species_table, 
+   popupOptions = c(maxWidth = 600),
+    highlight = highlightOptions(
+      weight = 1.5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE)
+   )  %>% 
+  addPolygons(
+    fillColor = ~pal_expproactive(world@data$expproactive_raw),
+    group = "exporter biosecurity capacity",
+    weight = 1,
+    opacity = 1,
+    color = "grey",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    popup = ~species_table,
+    popupOptions = c(maxWidth = 600),
+    highlight = highlightOptions(
+      weight = 1.5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE)
+  ) %>%
+  addLegend(pal = pal_risk, 
+            values = ~composite_export_risk,
+            group = "export risk (all risk factors)",
+            position = "bottomleft",
+            title = "export risk (probability of new arrival in UK)") %>% 
+  addLegend(pal = pal_richness, 
+            values = ~log(Phytophthora_richness),
+            group = "Phytophthora richness",
+            position = "bottomleft",
+            title = "# Phytophthora species reported") %>% 
+  addLegend(pal = pal_trade, 
+            values = ~log(1+trade_raw),
+            labFormat = labelFormat(transform = function(x) exp(x) - 1, digits = 0),
+            group = "annual exports to UK (metric tons of live plants)",
+            position = "bottomleft",
+            title = "annual exports to UK (metric tons of live plants)") %>% 
+  addLegend(pal = pal_climate, 
+            values = ~log(1+climate_raw), 
+            labFormat = labelFormat(transform = function(x) exp(x) - 1, digits = 3),
+            group = "climate similarity (1/Mahalanobis distance)",
+            position = "bottomleft",
+            title = "climate similarity (1/Mahalanobis distance)")  %>%
+  addLegend(pal = pal_expproactive, 
+            values = ~expproactive_raw, 
+            group = "exporter biosecurity capacity",
+            position = "bottomleft",
+            title = "exporter biosecurity capacity") %>% 
+  addLayersControl(
+        baseGroups = c("export risk (all risk factors)",
+                       "Phytophthora richness",
+                       "annual exports to UK (metric tons of live plants)", 
+                       "climate similarity (1/Mahalanobis distance)", 
+                       "exporter biosecurity capacity"),
+        options = layersControlOptions(collapsed = FALSE)
+       ) %>% 
+  # this section is a fudge to try to sync the legends with the layers shown when toggling between risk factors
+  # amazingly, there is no inbuilt way to do this with baselayers (only with overlaid layers, where more than one layer can be shown at once)
+htmlwidgets::onRender("
+    function(el, x) {
+      var updateLegend = function () {
+          var selectedGroup = document.querySelectorAll('input:checked')[0].nextSibling.innerText.substr(1);
 
-# save as static map for presentations
+          document.querySelectorAll('.legend').forEach(a => a.hidden=true);
+          document.querySelectorAll('.legend').forEach(l => {
+            if (l.children[0].children[0].innerText == selectedGroup) l.hidden=false;
+          });
+      };
+      updateLegend();
+      this.on('baselayerchange', e => updateLegend());
+    }") %>% 
+  addHomeButton(extent(world), layer.name = "Reset") 
 
-# save as html
- # saveWidget(Phytophthora_source_map,
- #             file = "C:/Users/loubar/Google Drive/Phytophthora_hosts/Phytophthora_source_map.html",
- #             title = "Phytophthora source map: annual imports of live plants")
- # 
- # 
- # webshot("Phytophthora_source_map.html", file = "flow_map_static.png",
- #         cliprect = "viewport")
 ```
+
+###Feedback
+
+Thank you for taking the time to explore these tools. Please follow the link below to complete your feedback. Your responses will be used to understand the value of information about international trade flows in supporting plant health awareness in planting and procurement decisions for environmental and landscaping purposes.  
+  
+*LB: It may be possible for us to embed a Google Forms item within the page (see https://github.com/ramnathv/RGoogleForms). However, we may need something more flexible for our questionnaire, in which case a link openeing in a new tab might work better. This is just a mock-up questionnaire...*  
+
+## [Enter my feedback - import risk models](<https://docs.google.com/forms/d/182WIK4SZFv0hQu9YyJ0FOddkD0I5w-HYJWm50hRDcyU/edit?usp=sharing>)
+
+
+
