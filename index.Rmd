@@ -6,8 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, root.dir = getwd())
-knitr::opts_knit$set(root.dir = getwd())
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 These tools are designed to explore the ways that ecological models and databases could be used to help support biosecurity awareness and decision-making when choosing plants for planting in the wider environment. The tools focus predominantly on *Phytophthora* pathogens, as this genus was the focus of a project called Phytothreats (<https://www.forestresearch.gov.uk/research/global-threats-from-phytophthora-spp/>). In that project, we aimed to rank future threats to the UK from *Phytophthora* species, using different modelling approaches to assess risk of arrival and establishment. Here, we hope to understand if these data and models could be of use to those who have to make decisions about planting, and how to further develop these approaches to better support plant health in planting schemes and the wider environment. Each of the pages below allows you to interact with the outputs from a model or dataset. Each one is accompanied by a video tutorial demonstrating ways to explore the information presented. After you have explored the different maps and data, there is a short survey attached to each one, asking for feedback on whether, and how, you might use these tools.  
