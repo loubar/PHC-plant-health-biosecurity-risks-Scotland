@@ -18,7 +18,7 @@ These tools are designed to explore the ways that ecological models and database
 ## [Which *Phytophthora* are associated with hosts in UK forest and forestry? Selecting resilient hosts.](<Phytophthora_hosts.html>)   
   
 
-## [UK suitability for *Phytophthora* species and known distributions.](<ramorum_niche.html.html>)  
+## [UK suitability for *Phytophthora* species and known distributions.](<ramorum_niche.html>)  
   
 
 ## [Supplementary juniper planting and *Phytophthora austrocedri* outbreaks.](<juniper_austrocedri.html>)  
