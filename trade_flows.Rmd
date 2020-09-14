@@ -51,7 +51,7 @@ world@data$Phytophthora_richness[world@data$Phytophthora_richness == 0] <- NA
 
 pal_richness <- colorNumeric("YlOrRd", domain = log(world@data$Phytophthora_richness))
 pal_risk <- colorNumeric("YlOrRd", domain = world@data$composite_export_risk)
-pal_climate <- colorNumeric("YlOrRd", domain = log(1+world@data$climate_raw))
+pal_climate <- colorNumeric("YlOrRd", domain = log(world@data$climate_raw))
 pal_trade <- colorNumeric("YlOrRd", domain = log(1+world@data$trade_raw))
 pal_expproactive <- colorNumeric("YlOrRd", domain = world@data$expproactive_raw)
 
@@ -78,6 +78,11 @@ This map allows you to explore the global source distributions of 422 non-native
 
 
 leaflet(data = world2, width = "100%") %>% addTiles(options = providerTileOptions(minZoom=1, maxZoom=10)) %>% 
+  addLegend(pal = pal_pest_richness, 
+            values = ~log(richness),
+            bins = 6,
+            labFormat = labelFormat(transform = function(x) exp(x), digits = 0),
+            position = "bottomleft") %>%
   addPolygons(
     fillColor = ~pal_pest_richness(log(world2@data$richness)),
     weight = 1,
@@ -86,7 +91,7 @@ leaflet(data = world2, width = "100%") %>% addTiles(options = providerTileOption
     dashArray = "3",
     fillOpacity = 0.7,
     popup = ~species_table,
-    popupOptions = c(maxWidth = 600),
+    popupOptions = c(maxWidth = 800),
     highlight = highlightOptions(
       weight = 1.5,
       color = "#666",
@@ -94,13 +99,7 @@ leaflet(data = world2, width = "100%") %>% addTiles(options = providerTileOption
       fillOpacity = 0.7,
       bringToFront = TRUE)
   ) %>%
-  addLegend(pal = pal_pest_richness, 
-            values = ~log(richness),
-            bins = 6,
-            labFormat = labelFormat(transform = function(x) exp(x), digits = 0),
-            position = "bottomleft",
-            title = "Pest richness") %>% 
-  addHomeButton(extent(world), layer.name = "Reset") 
+  addHomeButton(extent(world2), layer.name = "Reset") 
 
 ```
 
@@ -168,7 +167,7 @@ International trade in live plants is considered the main pathway for the introd
       bringToFront = TRUE)
   ) %>% 
   addPolygons(
-    fillColor = ~pal_climate(log(1+world@data$climate_raw)),
+    fillColor = ~pal_climate(log(world@data$climate_raw)),
     group = "climate similarity (1/Mahalanobis distance)",
    weight = 1,
     opacity = 1,
