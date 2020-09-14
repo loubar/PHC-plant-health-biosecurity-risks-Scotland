@@ -6,12 +6,14 @@ navbar:
 left:
   - text: "Home"
     href: index.html
-  - text: "Which *Phytophthora* are associated with hosts in UK forest and forestry? Selecting resilient hosts."
-    href: Phytophthora_hosts.html
-  - text: "Where are new *Phytophthora* coming from? Plant Health Biosecurity risks from imported plants."
+  - text: "Where are new pests and pathogens coming from?"
     href: trade_flows.html
-  - text: "UK suitability for *Phytophthora ramorum* and known distribution."
+  - text: "Which areas of the UK are at risk from pest or pathogen species?"
     href: ramorum_niche.html
-  - text: "Supplementary juniper planting and *Phytophthora austrocedri* outbreaks."
-    href: juniper_austrocedri.html
+  - text: "Which pest and pathogen species are plants and trees susceptible to?"
+    href: Phytophthora_hosts.html
+  - text: "Risk assessing wider environment planting schemes: juniper case study"
+    href: National_maps_for_PHCworks.html
+  - text: "Climate-based cost-benefit tools for management of invasive pests and pathogens"
+    href: climate_modelling_cost_benefit.html
     

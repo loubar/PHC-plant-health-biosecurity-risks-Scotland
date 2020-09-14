@@ -1,6 +1,7 @@
 ---
-title: "Mapping climate suitability"
-author: ""
+title: Which areas of the UK are at risk from pest or pathogen species?
+
+author: "Louise Barwell, Daniel Chapman and Bethan Purse"
 date: ""
 output: html_document
 ---
@@ -20,10 +21,11 @@ knitr::opts_chunk$set(echo = FALSE)
 #Environmental risk factors for *Phytophthora* establishment
 
 The environmental niches of pathogens can be estimated by matching patterns in their known occurrence with environmental risk factors. The maps presented below can be used to explore the predicted environmental suitability of 10km cells across the UK for a selection of *Phytophthora* species. The predictions are based on estimating how species global occurrences (excluding occurrences in the UK) are related to soil moisture, minimum Winter temperature, mean Summer temperature and land-use (agricultural, forest and urban cover). 
+<br>
 
 ![**Fig. 1  Varying role of environmental drivers between species**](env_variable_importance.png)
-  
-  
+<br>  
+<br>  
   
 These relationships were then used to predict suitability across the UK for these species and to validate the predictions by comparing them to available records for each species. This was intended to provide proof-of-concept for whether these approaches could be used to predict the suitbility of the UK climate for *Phytophthora* pathogens that have not yet arrived in the UK. 
 
@@ -217,3 +219,12 @@ pal <- colorNumeric(c("blue", "white", "red"), values(stack(r)),   na.color = "t
 
 
 ```
+##Data sources
+Information on *Phytophthora* outbreaks in the wider environment within the UK were provided by the Animal and Plant Health Agency, Science and Advice for Scottish Agriculture, the Royal Horticultural Society, Forest Research, Forestry Commission Scotland and Natural Resources Wales. They have been coarsened to 10km resolution to avoid identification of specific premises. No data from nurseries is presented.  
+
+Global *Phytophthora* distribution data were compiled from the literature and include contributed data from more than 100 expert pathologists.
+
+
+## [Enter my feedback - UK suitability models](<https://forms.gle/S7scwuArUAtXU2AD9>)
+
+

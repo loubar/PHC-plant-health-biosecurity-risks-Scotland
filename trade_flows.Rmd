@@ -1,25 +1,10 @@
 ---
-title: Global movement of *Phytophthora* species through the plant trade
-author: ""
+title: Where are new pests and pathogens coming from? 
+author: "Louise Barwell, Bethan Purse and Daniel Chapman"
 date: ""
 output: html_document
 ---
 
-###Import risk factors
-
-International trade in live plants is considered the main pathway for the introduction of plant pests and pathogens species to new geographic regions, but climate matching, biosecurity and pest reporting will also influence how pests and pathogens spread globally. By selecting import risk factors from the menu you can view global data on these different drivers of new arrivals of plant pests and pathogens. We have used these risk factors to build a model of *Phytophthora* import risk to the UK from exporting countries. By clicking on each country, you can view a list of the *Phytophthora* species that have been reported there and the relative risk of these species arriving in the UK, if not already present. We have also used biological characteristics or traits of these *Phytophthora* species to help predict which species may be more likely to be transported to and establish in new regions. These traits include thermal tolerance range and the presence and morphology of survival structures allowing them to persist in soil and asymptomatic hosts. 
-
-The video below demonstrates the ways you can interact with the data and maps.  
-  
-*LB: I haven't made this material yet. This is a random YouTube tutorial about RMarkdown so I could test if we could embed a video within the webpage. I think we should wait for the project meeting to see what Mike and Mariella think would be the best way to communicate the tools to stakeholders and how to best fit in with the stakeholder activities they have planned*     
-   
-     
-<iframe width="560" height="315" src="https://www.youtube.com/embed/6A5EpqqDOdk" frameborder="0" allowfullscreen></iframe>    
-   
-   
-  
-  
-  
 ```{r setup, echo = FALSE}
 
 knitr::opts_chunk$set(echo = FALSE)
@@ -69,7 +54,61 @@ pal_risk <- colorNumeric("YlOrRd", domain = world@data$composite_export_risk)
 pal_climate <- colorNumeric("YlOrRd", domain = log(1+world@data$climate_raw))
 pal_trade <- colorNumeric("YlOrRd", domain = log(1+world@data$trade_raw))
 pal_expproactive <- colorNumeric("YlOrRd", domain = world@data$expproactive_raw)
+
+# EPPO data
+load("data/EPPO_map_data.rData")
+world2 <- readOGR(dsn = 'data', layer = 'ne_50m_admin_0_countries', encoding='UTF-8')
+EPPO_map_data <- EPPO_map_data[EPPO_map_data$GU_A3 %in% world2$GU_A3,]
+world2 <- merge(world2, EPPO_map_data, all.x= TRUE) # 
+
+# where no Phytophthora are reported (0) convert richness to NA 
+world2@data$richness[world@data$richness == 0] <- NA
+
+pal_pest_richness <- colorNumeric("YlOrRd", domain = log(world2@data$richness))
+
+
 ```
+
+###Global trade networks and recent invasions of non-native pests, pathogens and plants
+
+This map allows you to explore the global source distributions of 422 non-native plant pests of concern within the EPPO (European Plant Protection organisation) region. Among these insect pests (173), pathogens (166) and weeds (83), live plant imports from nearby countries provided the best explanation of recent invasions (Chapman, D, Purse, BV, Roy, HE, Bullock, JM. Global trade networks determine the distribution of invasive non‐native species. Global Ecol Biogeogr. 2017; 26: 907– 917. https://doi.org/10.1111/geb.12599).
+
+```{r EPPO_source, warning=FALSE, message=FALSE}
+
+
+
+leaflet(data = world2, width = "100%") %>% addTiles(options = providerTileOptions(minZoom=1, maxZoom=10)) %>% 
+  addPolygons(
+    fillColor = ~pal_pest_richness(log(world2@data$richness)),
+    weight = 1,
+    opacity = 1,
+    color = "grey",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    popup = ~species_table,
+    popupOptions = c(maxWidth = 600),
+    highlight = highlightOptions(
+      weight = 1.5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE)
+  ) %>%
+  addLegend(pal = pal_pest_richness, 
+            values = ~log(richness),
+            bins = 6,
+            labFormat = labelFormat(transform = function(x) exp(x), digits = 0),
+            position = "bottomleft",
+            title = "Pest richness") %>% 
+  addHomeButton(extent(world), layer.name = "Reset") 
+
+```
+
+###Import risk factors: a *Phytophthora* case study
+
+International trade in live plants is considered the main pathway for the introduction of plant pests and pathogens species to new geographic regions. Climate matching between the exporting and importing regions and the biosecurity capacity of the importing and exporting nations may also influence how pests and pathogens spread globally. Pest reporting activity also varies among countries and will affect how well this spread can be predicted. We have used these risk factors to help predict *Phytophthora* import risk to the UK from exporting countries. We have also used the thermal tolerance ranges of these *Phytophthora* species to help predict which *Phytophthora* pathogens may be more likely to arrive and establish given the level of imports of live plants from the known source countries of that pathogen. 
+  
+
 
 ```{r map_flows, warning=FALSE, message=FALSE}
 # make the interactive map
@@ -79,7 +118,7 @@ pal_expproactive <- colorNumeric("YlOrRd", domain = world@data$expproactive_raw)
   leaflet(data = world, width = "100%") %>% addTiles(options = providerTileOptions(minZoom=1, maxZoom=10)) %>% 
   addPolygons(
     fillColor = ~pal_risk(world@data$composite_export_risk),
-    group = "export risk (all risk factors)",
+    group = "export risk (probability of new arrival in UK)",
     weight = 1,
     opacity = 1,
     color = "grey",
@@ -96,7 +135,7 @@ pal_expproactive <- colorNumeric("YlOrRd", domain = world@data$expproactive_raw)
   ) %>%
   addPolygons(
     fillColor = ~pal_richness(log(world@data$Phytophthora_richness)),
-    group = "Phytophthora richness",
+    group = "Phytophthora species richness",
     weight = 1,
     opacity = 1,
     color = "grey",
@@ -164,14 +203,16 @@ pal_expproactive <- colorNumeric("YlOrRd", domain = world@data$expproactive_raw)
   ) %>%
   addLegend(pal = pal_risk, 
             values = ~composite_export_risk,
-            group = "export risk (all risk factors)",
+            group = "export risk (probability of new arrival in UK)",
             position = "bottomleft",
             title = "export risk (probability of new arrival in UK)") %>% 
   addLegend(pal = pal_richness, 
             values = ~log(Phytophthora_richness),
-            group = "Phytophthora richness",
+            bins = 6,
+            labFormat = labelFormat(transform = function(x) exp(x), digits = 0),
+            group = "Phytophthora species richness",
             position = "bottomleft",
-            title = "# Phytophthora species reported") %>% 
+            title = "Phytophthora species richness") %>% 
   addLegend(pal = pal_trade, 
             values = ~log(1+trade_raw),
             labFormat = labelFormat(transform = function(x) exp(x) - 1, digits = 0),
@@ -179,8 +220,8 @@ pal_expproactive <- colorNumeric("YlOrRd", domain = world@data$expproactive_raw)
             position = "bottomleft",
             title = "annual exports to UK (metric tons of live plants)") %>% 
   addLegend(pal = pal_climate, 
-            values = ~log(1+climate_raw), 
-            labFormat = labelFormat(transform = function(x) exp(x) - 1, digits = 3),
+            values = ~log(climate_raw), 
+            labFormat = labelFormat(transform = function(x) exp(x), digits = 3),
             group = "climate similarity (1/Mahalanobis distance)",
             position = "bottomleft",
             title = "climate similarity (1/Mahalanobis distance)")  %>%
@@ -190,8 +231,8 @@ pal_expproactive <- colorNumeric("YlOrRd", domain = world@data$expproactive_raw)
             position = "bottomleft",
             title = "exporter biosecurity capacity") %>% 
   addLayersControl(
-        baseGroups = c("export risk (all risk factors)",
-                       "Phytophthora richness",
+        baseGroups = c("export risk (probability of new arrival in UK)",
+                       "Phytophthora species richness",
                        "annual exports to UK (metric tons of live plants)", 
                        "climate similarity (1/Mahalanobis distance)", 
                        "exporter biosecurity capacity"),
@@ -216,13 +257,10 @@ htmlwidgets::onRender("
 
 ```
 
-###Feedback
 
-Thank you for taking the time to explore these tools. Please follow the link below to complete your feedback. Your responses will be used to understand the value of information about international trade flows in supporting plant health awareness in planting and procurement decisions for environmental and landscaping purposes.  
-  
-*LB: It may be possible for us to embed a Google Forms item within the page (see https://github.com/ramnathv/RGoogleForms). However, we may need something more flexible for our questionnaire, in which case a link openeing in a new tab might work better. This is just a mock-up questionnaire...*  
 
-## [Enter my feedback - import risk models](<https://docs.google.com/forms/d/182WIK4SZFv0hQu9YyJ0FOddkD0I5w-HYJWm50hRDcyU/edit?usp=sharing>)
+
+## [Enter my feedback - Where are new pests and pathogens coming from?](<https://forms.gle/YVwCV1E7v6LDwKBH7>)
 
 
 

@@ -1,14 +1,24 @@
 ---
-title: "*Phytophthora* hosts in UK forests and commercial forestry"
-author: ""
+title: "Which pests and pathogens are plants and trees susceptible to?"
+author: "Louise Barwell, Daniel Chapman, Bethan Purse and Peter Scott"
 date: ""
 output: html_document
 
 ---
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+<br>
 
-###Selecting resilient hosts
+##A searchable database of pests and pathogens associated with plant species
 
-This tool is a searchable database of known *Phytophthora* pathogens of tree species used in UK forests and forestry. You can search by tree host, by pathogen, or by country.   
+You can search by plant host, by pathogen, or by country, using the search box below. 
+
+<br>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -16,22 +26,44 @@ knitr::opts_knit$set(root.dir = getwd())
 library(DT)
 library(raster)
 library(knitr)
+library(stringr)
+library(dplyr)
+library(kableExtra)
 ```
 ```{r host_data}
 
-load("data/hosts.rData")
+load("data/ag_hosts.rData")
+uk <- read.csv("data/UK_first_records.csv", stringsAsFactors = FALSE)
 
+uk$species <- gsub("bisheria", "bishii", uk$species)
 
 
 ```
 
-**Search for a UK host tree species to find associated *Phytophthora* pathogens**  
-  
   
 ```{r host1, echo=FALSE, out.width = '50%'}
 
-hosts <- hosts[,c("UK host species", "host family", "Phytophthora species", "Phytophthora present in UK", "country", "year", "reference" )]
-datatable(hosts,
+ag_hosts$inUK <- ifelse(ag_hosts$pathogen %in% uk$species,
+                        yes = "yes", no = "no") 
+mult_hosts <- grep(",", ag_hosts$host) # some rows still have multiple hosts
+# separate these
+
+sep_hosts_ls <- list()
+for(i in 1:length(mult_hosts)){
+  hosts_sep <- strsplit(ag_hosts[mult_hosts[i],"host"], split = ", ")[[1]]
+  sep_hosts_ls[[i]] <- data.frame(host = hosts_sep,
+                         ag_hosts[mult_hosts[i],grep("host", names(ag_hosts), invert = TRUE , value = TRUE)],
+                         row.names = NULL)
+}
+sep_hosts_ls <- do.call(rbind, sep_hosts_ls)
+
+ag_hosts <- ag_hosts[-mult_hosts,]
+
+ag_hosts <- rbind(ag_hosts, sep_hosts_ls)
+
+ag_hosts <- ag_hosts[!ag_hosts$host %in% "soil",]
+datatable(ag_hosts[,c("host", "pathogen", "inUK", "country", "reference")],
+          colnames = c("Host plant", "Pest/pathogen", "Pest/pathogen present in UK", "Source distribution", "Data source"),
           rownames = FALSE, 
           escape = FALSE)
 
@@ -39,10 +71,31 @@ datatable(hosts,
 
 
 ```
-###Feedback
+<br>
 
-Thank you for taking the time to explore this data. Please follow the link below to complete your feedback. Your responses will be used to understand the value of information about which hosts are known to be susceptible to *Phytophthora* species in supporting plant health awareness in planting and procurement decisions for environmental and landscaping purposes.
+##Horizon-scanning for future pathogen threats using host-pathogen databases
 
-*LB: It may be possible for us to embed a Google Forms item within the page (see https://github.com/ramnathv/RGoogleForms). However, we may need something more flexible for our questionnaire, in which case a link openeing in a new tab might work better. This is just a mock-up questionnaire...*
+We have explored whether biological traits and evolutionary relationships between *Phytophthora* pathogens could be used to predict which *Phytophthora* species may have the potential to attack a very broad taxonomic range of host plants. This is a ranked list of the *Phytophthora* species with the most under-reported number of host plant families relative to our model predictions. These species have similar biological traits and/or are closely related to other broad host range *Phytophthora* pathogens, but have only recently been described and may have a much broader range of host plant families than is currently known.  
 
-## [Enter my feedback - *Phytophthora* associated with hosts in UK forest and forestry?](<https://docs.google.com/forms/d/182WIK4SZFv0hQu9YyJ0FOddkD0I5w-HYJWm50hRDcyU/edit?usp=sharing>)
+
+```{r horizon scan}
+
+load("data/ob_pred_higher_host.rData")
+kable(ob_pred_higher_host[ob_pred_higher_host$year>=2010,,][1:10,,] %>% 
+        mutate(Estimate = paste0(sprintf("%.2f", Estimate), " [", 
+                                 sprintf("%.2f", Q2.5), ", ", 
+                                 sprintf("%.2f", Q97.5), "]"),
+               species_name = gsub("italic|\\(|\\)|'", "", species_name)) %>% dplyr::select(c(1,4,6:8)), 
+      row.names = FALSE, 
+      digits = 2,
+      col.names = c("Estimated number of host plant families [lower, upper 95% credible intervals]",
+                    "Observed number of host plant families",
+                    "Pathogen name",
+                    "Year pathogen described",
+                    "Phylogenetic clade")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = T)
+
+```
+<br>
+
+## [Enter my feedback - Which pathogens are plants and trees susceptible to?](<https://forms.gle/1WN1onpo8EbfT5Fq5>)

@@ -1,0 +1,101 @@
+---
+title: Risk assessing wider environment planting schemes
+author: "Flora Donald"
+date: ""  
+output: html_document
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+```{r setup, include=FALSE}
+require(BRCmap)
+require(leaflet)
+require(dplyr)
+require(tidyr)
+require(rgdal)
+knitr::opts_chunk$set(echo = FALSE)
+
+```
+<br>
+<br>
+
+##Case study: *Phytophthora austrocedri* infection of UK juniper
+Juniper has widely been planted for conservation purposes to re-invigorate dwindling, native populations. However, the introduced plant pathogen, Phytophthora austrocedri, is now causing widespread mortality in juniper populations across the UK. Supplementary juniper planting is a potential pathway by which the pathogen could be introduced or spread. Management guidance for juniper was issued by DEFRA in 2017, including a decision tree to help assess the need and site suitability for supplementary planting. We aim to find out how the decision tree could be made more accessible to inform juniper conservation strategies.
+
+<br>
+
+###Juniper management guidance accessibility
+![](decision_tree.png)
+
+<br>
+
+### Wider environment detections of *P. austrocedri* in native juniper populations
+  
+Records of *P. austrocedri* are positive qPCR results collated by Forest Research, Forestry Commission and FERA displayed at 1km resolution.  
+Records are labelled with the 1km grid reference and year of first detection.  
+Records of *Juniperus communis* s.l. observed 1990-2020 obtained at 2x2km resolution from the Botanical Society of Britain and Ireland,  
+filtered to exclude records notated as alien or planted.   
+
+```{r Distribution map setup, echo=FALSE, message=FALSE, results='hide'}
+
+load("data/Juniper_Paus_National_Distributions_070920.RData")
+
+```
+
+```{r Distribution map, echo=FALSE, message=FALSE}
+
+leaflet(Tet90_poly) %>% 
+  addPolygons(color="#046C9A", weight=2, fillOpacity = 0, opacity = 100) %>%
+  addProviderTiles(providers$Esri.WorldShadedRelief) %>%
+  addCircleMarkers(lng=Paus84@coords[,1], lat=Paus84@coords[,2], label = ~ Paus84@data$Label,
+                   radius = 6,color = "#F98400", stroke = TRUE, fillOpacity = 1, weight=2) %>%
+  addLegend(colors = c("#046C9A", "#F98400"), labels=c("Juniper", "P. austrocedri"), opacity = 1, position = )
+```
+
+<br>
+
+### Locations of supplementary juniper planting in the wider environment
+  
+Records of planted juniper compiled from individual landowners / land managers obtained at 2x2km resolution or better.  
+Approximate year of planting shown according to colour scale.  
+We are uncertain how long foliage symptoms take to develop following infection  
+but expect populations planted after 2009 could still be asymptomatic
+
+```{r Planting map, echo=FALSE, message=FALSE}
+
+leaflet(Tet90_poly) %>% 
+  addPolygons(color="#046C9A", weight=2, fillOpacity = 0, opacity = 100) %>%
+  addAwesomeMarkers(data=Planted_clean_pp,
+                    icon = ~ logos[Planted_clean_pp@data$Icon]) %>%
+  addProviderTiles(providers$Esri.WorldShadedRelief) %>%
+  addCircleMarkers(lng=Paus84@coords[,1], lat=Paus84@coords[,2], label = ~ Paus84@data$Label,
+                   radius = 6,color = "#F98400", stroke = TRUE, fillOpacity = 1, weight=2) %>%
+  addLegend(colors = c("#046C9A", "#F98400"), labels=c("Juniper", "P. austrocedri"), opacity = 1, position = ) %>%
+  addControl(html = markerLegendHTML(IconSet = logos), position = "bottomleft")
+
+```
+
+<br>
+
+## [Enter my feedback - Risk assessing wider environment planting schemes: Juniper case study](<https://forms.gle/An4ExifFyRSAtMKp7>)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

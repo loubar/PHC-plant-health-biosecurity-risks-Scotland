@@ -1,5 +1,5 @@
 ---
-title: "Developing tools to support plant health biosecurity in Scotland"
+title: "Developing tools to support plant health biosecurity decisions in Scotland"
 author: ""
 date: ""
 output: html_document
@@ -7,19 +7,49 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+
 ```
 
-These tools are designed to explore the ways that ecological models and databases could be used to help support biosecurity awareness and decision-making when choosing plants for planting in the wider environment. The tools focus predominantly on *Phytophthora* pathogens, as this genus was the focus of a project called Phytothreats (<https://www.forestresearch.gov.uk/research/global-threats-from-phytophthora-spp/>). In that project, we aimed to rank future threats to the UK from *Phytophthora* species, using different modelling approaches to assess risk of arrival and establishment. Here, we hope to understand if these data and models could be of use to those who have to make decisions about planting, and how to further develop these approaches to better support plant health in planting schemes and the wider environment. Each of the pages below allows you to interact with the outputs from a model or dataset. Each one is accompanied by a video tutorial demonstrating ways to explore the information presented. After you have explored the different maps and data, there is a short survey attached to each one, asking for feedback on whether, and how, you might use these tools.  
+<br>
 
-## [Where are new *Phytophthora* coming from? Plant Health Biosecurity risks from imported plants.](<trade_flows.html>)  
-  
+![](PHC_logo.png)
 
-## [Which *Phytophthora* are associated with hosts in UK forest and forestry? Selecting resilient hosts.](<Phytophthora_hosts.html>)   
-  
 
-## [UK suitability for *Phytophthora* species and known distributions.](<ramorum_niche.html>)  
-  
+<br>
+<br>
 
-## [Supplementary juniper planting and *Phytophthora austrocedri* outbreaks.](<juniper_austrocedri.html>)  
+###These tools are designed to explore the ways that ecological models and databases could be used to help support biosecurity awareness and decision-making when choosing and procuring plants for planting in the wider environment. They were developed as part of two projects funded by Scotland's Plant Health Centre.
+
+<br>
+
+###Each of the pages below allows you to interact with the outputs from a model or dataset. There is a short survey attached to each section, asking for feedback on whether, and how, you might use these tools.  
+<br>
+<br>
+
+## [Where are new pests and pathogens coming from?](<trade_flows.html>) 
+####Risk factors for import: Pathogen source regions, global trade networks, climate-matching, exporter biosecurity and pathogen traits
+<br>  
+
+## [Which areas of the UK are at risk from pest or pathogen species?](<ramorum_niche.html>)
+####Environmental risk factors for establishment, UK suitability and outbreaks in the wider environment for 9 Phytophthora species  
+<br> 
+
+## [Which pest and pathogen species are plants and trees susceptible to?](<Phytophthora_hosts.html>) 
+####Known host-pathogen associations and the geographic origin of the reports  
+<br>  
+
+## [Risk assessing wider environment planting schemes: juniper case study](<National_maps_for_PHCworks.html>)  
+####Supplementary juniper planting as a potential pathway by which the pathogen could be introduced or spread.   
+<br>  
+
+## [Climate-based cost-benefit tools for management of invasive pests and pathogens](<climate_modelling_cost_benefit.html>)
+
+<br>
+<br>
+
+###More information about the projects can be found here:
+
+###https://www.planthealthcentre.scot/projects/assessment-large-scale-plant-biosecurity-risks-scotland-large-scale-plantings-landscaping
+###https://www.planthealthcentre.scot/projects/assessment-large-scale-plant-biosecurity-risks-scotland-large-scale-tree-plantings
   
 
