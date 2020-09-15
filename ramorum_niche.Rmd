@@ -6,21 +6,15 @@ date: ""
 output: html_document
 ---
 
-<style type="text/css">
-.main-container {
-  max-width: 1800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-</style>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 
 ```
-#Environmental risk factors for *Phytophthora* establishment
+#Environmental risk factors for establishment
 
-The environmental niches of pathogens can be estimated by matching patterns in their known occurrence with environmental risk factors. The maps presented below can be used to explore the predicted environmental suitability of 10km cells across the UK for a selection of *Phytophthora* species. The predictions are based on estimating how species global occurrences (excluding occurrences in the UK) are related to soil moisture, minimum Winter temperature, mean Summer temperature and land-use (agricultural, forest and urban cover). 
+The environmental tolerances of pathogens and pests can be estimated by matching patterns in their known occurrence with environmental and socio-economic variables like climate and land-use. The maps presented below can be used to explore the predicted suitability of 10km cells across the UK for nine *Phytophthora* species. The predictions are based on estimating how species global occurrences (excluding occurrences in the UK) are related to soil moisture, minimum Winter temperature, mean Summer temperature and land-use (agricultural, forest and urban cover). 
+
 <br>
 
 ![**Fig. 1  Varying role of environmental drivers between species**](env_variable_importance.png)
@@ -219,12 +213,16 @@ pal <- colorNumeric(c("blue", "white", "red"), values(stack(r)),   na.color = "t
 
 
 ```
+
+<br>
+
 ##Data sources
+
 Information on *Phytophthora* outbreaks in the wider environment within the UK were provided by the Animal and Plant Health Agency, Science and Advice for Scottish Agriculture, the Royal Horticultural Society, Forest Research, Forestry Commission Scotland and Natural Resources Wales. They have been coarsened to 10km resolution to avoid identification of specific premises. No data from nurseries is presented.  
 
 Global *Phytophthora* distribution data were compiled from the literature and include contributed data from more than 100 expert pathologists.
 
 
-## [Enter my feedback - UK suitability models](<https://forms.gle/S7scwuArUAtXU2AD9>)
+## [Enter my feedback](<https://forms.gle/S7scwuArUAtXU2AD9>)
 
 

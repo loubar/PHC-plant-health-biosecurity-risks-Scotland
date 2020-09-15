@@ -82,7 +82,8 @@ leaflet(data = world2, width = "100%") %>% addTiles(options = providerTileOption
             values = ~log(richness),
             bins = 6,
             labFormat = labelFormat(transform = function(x) exp(x), digits = 0),
-            position = "bottomleft") %>%
+            position = "topright",
+            title = "Pest richness") %>%
   addPolygons(
     fillColor = ~pal_pest_richness(log(world2@data$richness)),
     weight = 1,
