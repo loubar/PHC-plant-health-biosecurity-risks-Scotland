@@ -71,7 +71,7 @@ pal_pest_richness <- colorNumeric("YlOrRd", domain = log(world2@data$richness))
 
 ###Global trade networks and recent invasions of non-native pests, pathogens and plants
 
-This map allows you to explore the global source distributions of 422 non-native plant pests of concern within the EPPO (European Plant Protection organisation) region. Among these insect pests (173), pathogens (166) and weeds (83), live plant imports from nearby countries provided the best explanation of recent invasions (Chapman, D, Purse, BV, Roy, HE, Bullock, JM. Global trade networks determine the distribution of invasive non‐native species. Global Ecol Biogeogr. 2017; 26: 907– 917. https://doi.org/10.1111/geb.12599).
+This map allows you to explore the global source distributions of 422 non-native plant pests of concern within the EPPO (European Plant Protection Organisation) region. Among these insect pests (173), pathogens (166) and weeds (83), live plant imports from nearby countries provided the best explanation of recent invasions (Chapman, D, Purse, BV, Roy, HE, Bullock, JM. Global trade networks determine the distribution of invasive non‐native species. Global Ecol Biogeogr. 2017; 26: 907– 917. https://doi.org/10.1111/geb.12599).
 
 ```{r EPPO_source, warning=FALSE, message=FALSE}
 

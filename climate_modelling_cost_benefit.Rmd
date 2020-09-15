@@ -1,19 +1,17 @@
 ---
-title: "Climate-based cost-benefit tool"
+title: "A decision support framework for assessing climate change impact on tree and plant pests and diseases"
 author: "Adam Kleczkowski"
 date: ""
 output: html_document
 ---
-##Impact Of Climate Change On The Spread Of Pests And Diseases In Scotland
-The movement of plant pests and pathogens into Scotland in likely to increase in the coming years, e.g. due to changes in trade, potentially increasing from outside Europe following Brexit, while their spread and severity could be affected by climate change (both positively and negatively). It is therefore vital that we understand the role of climate on the impacts of such pests and diseases across the whole of Scotland, in relation to the distribution of plant hosts, allowing us to target potential control options on the main threats. To allow plant health professionals and others to assess such impacts in as straight forward a way as possible, web- / desktop-based tools are needed that offer quick and easy access to complex computer models. These models should be as comprehensive as possible, allowing new information on pests, pathogens and their hosts to be added as it becomes available.
+<br>
 
-This project constructed a modelling framework which combined epidemiological and economic modelling.  The modelling framework was used to study predictions of spread and economic impact of pests which are not currently in the UK, including Xylella fastidiosa, Candidatus Liberibacter solanacearum (Zebra chip) and Ips typographus (Eight toothed Spruce Bark Beetle). 
+####The aim of the project was to construct a framework which allows analysis of the effects of climate change on emergence and spread of plant and tree pests and diseases. A novel modelling framework has been constructed combining epidemiological and economic modelling and implemented in a user-friendly online app. The framework has been combined with a literature review to obtain estimates of epidemiological parameters and economic values (both market and non-market) for the selected pests and hosts. Future climate change scenarios have been incorporated together with the impact if increased temperature on pests. The app can be used to study predictions of spread and economic impact of pests in forestry or agriculture settings.
 
-The web/desktop application is available here:
-<https://pztool.shinyapps.io/FCTool10new_v8/>
+####The web/desktop application is available here <https://pztool.shinyapps.io/FCTool10new_v8/>
 
 
 <br>
 <br>
 
-## [Enter my feedback](<https://forms.gle/KDotaeSrkSCrd4ve7>)
+### [Enter my feedback](<https://forms.gle/KDotaeSrkSCrd4ve7>)

@@ -42,7 +42,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ####Supplementary juniper planting as a potential pathway by which the pathogen could be introduced or spread.   
 <br>  
 
-## [Climate-based cost-benefit tools for management of invasive pests and pathogens](<climate_modelling_cost_benefit.html>)
+## [A decision support framework for assessing climate change impact on tree and plant pests and diseases](<climate_modelling_cost_benefit.html>)
 
 <br>
 <br>
