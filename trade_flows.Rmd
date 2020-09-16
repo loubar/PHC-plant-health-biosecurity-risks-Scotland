@@ -92,7 +92,7 @@ leaflet(data = world2, width = "100%") %>% addTiles(options = providerTileOption
     dashArray = "3",
     fillOpacity = 0.7,
     popup = ~species_table,
-    popupOptions = c(maxWidth = 800,
+    popupOptions = c(maxWidth = 1200,
                      maxHeight = 300),
     highlight = highlightOptions(
       weight = 1.5,
@@ -100,8 +100,8 @@ leaflet(data = world2, width = "100%") %>% addTiles(options = providerTileOption
       dashArray = "",
       fillOpacity = 0.7,
       bringToFront = TRUE)
-  ) #%>%
-  #addHomeButton(extent(world2), layer.name = "Reset") 
+  ) %>%
+  addHomeButton(extent(world2), layer.name = "Reset") 
 
 ```
 
