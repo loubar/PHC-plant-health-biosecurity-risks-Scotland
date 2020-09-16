@@ -18,38 +18,38 @@ knitr::opts_chunk$set(echo = FALSE)
 <br>
 <br>
 
-###These tools are designed to explore the ways that ecological models and databases could be used to help support biosecurity awareness and decision-making when choosing and procuring plants for planting in the wider environment. They were developed as part of two projects funded by Scotland's Plant Health Centre.
+####These tools and questionnaires are designed to explore the ways that ecological models and databases could be used to help support biosecurity awareness and decision-making when choosing and procuring plants for planting in the wider environment. They were partly developed under two projects funded by Scotland's Plant Health Centre. They are based on models and databases created under a number of different plant health projects including PHYTO-THREATS (https://www.forestresearch.gov.uk/research/global-threats-from-phytophthora-spp/), a PhD (https://www.ceh.ac.uk/staff/flora-donald), and a previous Plant Health Centre-funded project (https://www.planthealthcentre.scot/projects/impact-climate-change-spread-pests-and-diseases-scotland).  
 
+
+####Each of the pages below allows you to interact with the outputs from a model or dataset. There is a short survey attached to each section, asking for feedback on whether, and how, you might use these tools.  
+<br>
 <br>
 
-###Each of the pages below allows you to interact with the outputs from a model or dataset. There is a short survey attached to each section, asking for feedback on whether, and how, you might use these tools.  
-<br>
-<br>
-
-## [Where are new pests and pathogens coming from?](<trade_flows.html>) 
+## [a) Where are new pests and pathogens coming from?](<trade_flows.html>) 
 ####Risk factors for import: Pathogen source regions, global trade networks, climate-matching, exporter biosecurity and pathogen traits
 <br>  
 
-## [Which areas of the UK are at risk from pest or pathogen species?](<ramorum_niche.html>)
+## [b) Which areas of the UK are at risk from pest or pathogen species?](<ramorum_niche.html>)
 ####Environmental risk factors for establishment, UK suitability and outbreaks in the wider environment for 9 Phytophthora species  
 <br> 
 
-## [Which pest and pathogen species are plants and trees susceptible to?](<Phytophthora_hosts.html>) 
+## [c) Which pest and pathogen species are plants and trees susceptible to?](<Phytophthora_hosts.html>) 
 ####Known host-pathogen associations and the geographic origin of the reports  
 <br>  
 
-## [Risk assessing wider environment planting schemes: juniper case study](<National_maps_for_PHCworks.html>)  
+## [d) Risk assessing wider environment planting schemes: juniper case study](<National_maps_for_PHCworks.html>)  
 ####Supplementary juniper planting as a potential pathway by which the pathogen could be introduced or spread.   
 <br>  
 
-## [A decision support framework for assessing climate change impact on tree and plant pests and diseases](<climate_modelling_cost_benefit.html>)
+## [e) A decision support framework for assessing climate change impact on tree and plant pests and diseases](<climate_modelling_cost_benefit.html>)
+####The effects of climate change on emergence and spread of plant and tree pests and diseases. 
 
 <br>
 <br>
 
-###More information about the projects can be found here:
+###More information about the Plant Health Centre projects can be found here:
 
-###https://www.planthealthcentre.scot/projects/assessment-large-scale-plant-biosecurity-risks-scotland-large-scale-plantings-landscaping
-###https://www.planthealthcentre.scot/projects/assessment-large-scale-plant-biosecurity-risks-scotland-large-scale-tree-plantings
+####https://www.planthealthcentre.scot/projects/assessment-large-scale-plant-biosecurity-risks-scotland-large-scale-plantings-landscaping
+####https://www.planthealthcentre.scot/projects/assessment-large-scale-plant-biosecurity-risks-scotland-large-scale-tree-plantings
   
 

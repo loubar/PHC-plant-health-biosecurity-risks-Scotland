@@ -69,9 +69,10 @@ pal_pest_richness <- colorNumeric("YlOrRd", domain = log(world2@data$richness))
 
 ```
 
+
 ###Global trade networks and recent invasions of non-native pests, pathogens and plants
 
-This map allows you to explore the global source distributions of 422 non-native plant pests of concern within the EPPO (European Plant Protection Organisation) region. Among these insect pests (173), pathogens (166) and weeds (83), live plant imports from nearby countries provided the best explanation of recent invasions (Chapman, D, Purse, BV, Roy, HE, Bullock, JM. Global trade networks determine the distribution of invasive non‐native species. Global Ecol Biogeogr. 2017; 26: 907– 917. https://doi.org/10.1111/geb.12599).
+This map allows you to explore the global source distributions of 422 non-native plant pests of concern within the EPPO (European Plant Protection Organisation) region. Among these insect pests (173), pathogens (166) and weeds (83), live plant imports from nearby countries provided the best explanation of recent invasions (Chapman, D, *et al.* Global trade networks determine the distribution of invasive non‐native species. Global Ecol Biogeogr. 2017; 26: 907– 917. https://doi.org/10.1111/geb.12599). Countries with deeper red colours are those reporting more pests that are non-native within the EPPO region. By clicking on the country you can explore which pests are known to be present in that country, whether the pest is already present in the UK and whether it is on the UK Plant Health Risk Register.
 
 ```{r EPPO_source, warning=FALSE, message=FALSE}
 
@@ -80,10 +81,9 @@ This map allows you to explore the global source distributions of 422 non-native
 leaflet(data = world2, width = "100%") %>% addTiles(options = providerTileOptions(minZoom=1, maxZoom=10)) %>% 
   addLegend(pal = pal_pest_richness, 
             values = ~log(richness),
-            bins = 6,
-            labFormat = labelFormat(transform = function(x) exp(x), digits = 0),
+            #labFormat = labelFormat(transform = function(x) exp(x), digits = 0),
             position = "topright",
-            title = "Pest richness") %>%
+            title = "No. of non-native pests") %>%
   addPolygons(
     fillColor = ~pal_pest_richness(log(world2@data$richness)),
     weight = 1,
@@ -92,23 +92,25 @@ leaflet(data = world2, width = "100%") %>% addTiles(options = providerTileOption
     dashArray = "3",
     fillOpacity = 0.7,
     popup = ~species_table,
-    popupOptions = c(maxWidth = 800),
+    popupOptions = c(maxWidth = 800,
+                     maxHeight = 300),
     highlight = highlightOptions(
       weight = 1.5,
       color = "#666",
       dashArray = "",
       fillOpacity = 0.7,
       bringToFront = TRUE)
-  ) %>%
-  addHomeButton(extent(world2), layer.name = "Reset") 
+  ) #%>%
+  #addHomeButton(extent(world2), layer.name = "Reset") 
 
 ```
 
 ###Import risk factors: a *Phytophthora* case study
 
 International trade in live plants is considered the main pathway for the introduction of plant pests and pathogens species to new geographic regions. Climate matching between the exporting and importing regions and the biosecurity capacity of the importing and exporting nations may also influence how pests and pathogens spread globally. Pest reporting activity also varies among countries and will affect how well this spread can be predicted. We have used these risk factors to help predict *Phytophthora* import risk to the UK from exporting countries. We have also used the thermal tolerance ranges of these *Phytophthora* species to help predict which *Phytophthora* pathogens may be more likely to arrive and establish given the level of imports of live plants from the known source countries of that pathogen. 
-  
 
+These models were developed as part of the PHYTO-THREATS project: Global threats from *Phytophthora* species (https://www.forestresearch.gov.uk/research/global-threats-from-phytophthora-spp/). The study was supported by a grant funded jointly by the Biotechnology and Biological Sciences Research Council, the Department for Environment, Food and Rural affairs, the Economic and Social Research Council, the Forestry Commission, the Natural Environment Research Council and the Scottish Government, under the Tree Health and Plant Biosecurity Initiative (project reference BB/N023463/1).  
+  
 
 ```{r map_flows, warning=FALSE, message=FALSE}
 # make the interactive map
@@ -125,7 +127,8 @@ International trade in live plants is considered the main pathway for the introd
     dashArray = "3",
     fillOpacity = 0.7,
     popup = ~species_table,
-    popupOptions = c(maxWidth = 600),
+    popupOptions = c(maxWidth = 600,
+                     maxHeight = 300),
     highlight = highlightOptions(
       weight = 1.5,
       color = "#666",

@@ -28,6 +28,11 @@ knitr::opts_chunk$set(echo = FALSE)
 ##Case study: *Phytophthora austrocedri* infection of UK juniper
 Juniper has widely been planted for conservation purposes to re-invigorate dwindling, native populations. However, the introduced plant pathogen, Phytophthora austrocedri, is now causing widespread mortality in juniper populations across the UK. Supplementary juniper planting is a potential pathway by which the pathogen could be introduced or spread. Management guidance for juniper was issued by DEFRA in 2017, including a decision tree to help assess the need and site suitability for supplementary planting. We aim to find out how the decision tree could be made more accessible to inform juniper conservation strategies.
 
+These data and maps will be used to model the impact of an oomycete pathogen, *Phytophthora austrocedri*, on UK native juniper (Juniperus communis) as part of a PhD project funded by the Scottish Forestry Trust, Forestry Commission, Forest Research, Scottish Natural Heritage and the Royal Botanic Garden Edinburgh and UKCEH, registered at the University of Cambridge Plant Science Department.
+
+https://www.ceh.ac.uk/staff/flora-donald 
+https://www.plantsci.cam.ac.uk/directory/donald-flora
+
 <br>
 
 ###Juniper management guidance accessibility

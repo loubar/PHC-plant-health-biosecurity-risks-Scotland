@@ -18,6 +18,9 @@ output: html_document
 
 You can search by plant host, by pathogen, or by country, using the search box below. 
 
+These data were collated as part of the PHYTO-THREATS project: Global threats from *Phytophthora* species (https://www.forestresearch.gov.uk/research/global-threats-from-phytophthora-spp/). The work was supported by a grant funded jointly by the Biotechnology and Biological Sciences Research Council, the Department for Environment, Food and Rural affairs, the Economic and Social Research Council, the Forestry Commission, the Natural Environment Research Council and the Scottish Government, under the Tree Health and Plant Biosecurity Initiative (project reference BB/N023463/1).  
+  
+
 <br>
 
 ```{r setup, include=FALSE}

@@ -21,8 +21,9 @@ The environmental tolerances of pathogens and pests can be estimated by matching
 <br>  
 <br>  
   
-These relationships were then used to predict suitability across the UK for these species and to validate the predictions by comparing them to available records for each species. This was intended to provide proof-of-concept for whether these approaches could be used to predict the suitbility of the UK climate for *Phytophthora* pathogens that have not yet arrived in the UK. 
+These relationships were then used to predict suitability across the UK for these species and to validate the predictions by comparing them to available records for each species. This was intended to provide proof-of-concept for whether these approaches could be used to predict the suitbility of the UK climate for *Phytophthora* pathogens that have not yet arrived in the UK.
 
+These models were developed as part of the PHYTO-THREATS project: Global threats from *Phytophthora* species (https://www.forestresearch.gov.uk/research/global-threats-from-phytophthora-spp/). The study was supported by a grant funded jointly by the Biotechnology and Biological Sciences Research Council, the Department for Environment, Food and Rural affairs, the Economic and Social Research Council, the Forestry Commission, the Natural Environment Research Council and the Scottish Government, under the Tree Health and Plant Biosecurity Initiative (project reference BB/N023463/1). 
 
 ```{r niche_map, include=FALSE}
 #library(biomod2)
